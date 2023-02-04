@@ -1,0 +1,190 @@
+//ハンバーガーボタン
+
+jQuery(function ($) {
+
+  //ハンバーガーボタンを押したとき
+  $('.js-button-hamburger').click(function () {
+
+    //クラスを切り替え
+    $('body').toggleClass('is-active-drawer');
+
+    //もしfalseになっていたらtrue変更
+    if ($(this).attr('aria-expanded') == 'false') {
+
+      $(this).attr('aria-expanded', true);
+
+    } else {
+      $(this).attr('aria-expanded', false);
+    }
+  });
+});
+
+//Contactへ移動
+jQuery(function ($) {
+
+  // 「a要素のhref属性が # から始まる要素」をクリックした時
+  $('a[href^="#"]').click(function () {
+
+    // 目的地の取得（自身のhref属性を取得）
+    var id = $(this).attr('href');
+
+    // 目的地の位置を取得
+    var target = $(id).offset();
+    // console.log(id);
+
+    // html要素とbody要素にアニメーション
+    $('html, body').animate({
+      scrollTop: target.top // 目的地の上からの位置
+    }, 500);
+
+    //aタグのリンク機能を無効にする
+    return false;
+  });
+});
+
+
+//Top用
+jQuery(function ($) {
+
+  //高さを取得。これがイベント発火位置になる。
+  var header = $('.l-header').outerHeight();
+
+  $(window).on('load scroll', function () {
+    if ($(window).scrollTop() < header) {
+
+      //ヘッダーが表示されている間は再度ナビを非表示
+      $('.l-global-sidenav').removeClass('-show');
+
+    } else {
+      //ヘッダーが隠れたらサイドナビを表示
+      $('.l-global-sidenav').addClass('-show');
+    }
+  });
+});
+
+//左から右へのスライダー
+jQuery(function ($) {
+
+  $(window).on('load scroll', function () {
+    add_class_in_scrolling($('.linear1'));
+    add_class_in_scrolling($('.linear2'));
+    add_class_in_scrolling($('.linear3'));
+    add_class_in_scrolling($('.linear4'));
+    add_class_in_scrolling($('.linear5'));
+    add_class_in_scrolling($('.linear6'));
+    // add_class_in_scrolling($('.sample2'));
+    // add_class_in_scrolling($('.sample3'));
+  });
+
+  // スクロールで要素が表示された時にclassを付与する
+  function add_class_in_scrolling(target) {
+    var winScroll = $(window).scrollTop();
+    var winHeight = $(window).height();
+    var scrollPos = winScroll + winHeight;
+
+    if (target.offset().top < scrollPos) {
+      target.addClass('is-slide');
+    }
+  }
+});
+
+jQuery(function ($) {
+
+  // リストを非表示
+  $('.page-about').hide();
+  // 繰り返し処理
+  $('.page-about').each(function (i) {
+    // 遅延させてフェードイン
+    $(this).delay(1000 * i).fadeIn(1500);
+  });
+
+});
+
+jQuery(function ($) {
+
+  var effect_btm = 300; // 画面下からどの位置でフェードさせるか(px)
+  var effect_move = 50; // どのぐらい要素を動かすか(px)
+  var effect_time = 800; // エフェクトの時間(ms) 1秒なら1000
+
+  //親要素と子要素のcssを定義
+  $('.scroll-fade-row').css({
+    opacity: 0
+  });
+  $('.scroll-fade-row').children().each(function () {
+    $(this).css({
+      opacity: 0,
+      transform: 'translateY(' + effect_move + 'px)',
+      transition: effect_time + 'ms'
+    });
+  });
+
+  // スクロールまたはロードするたびに実行
+  $(window).on('scroll load', function () {
+    var scroll_top = $(this).scrollTop();
+    var scroll_btm = scroll_top + $(this).height();
+    var effect_pos = scroll_btm - effect_btm;
+
+    //エフェクトが発動したとき、子要素をずらしてフェードさせる
+    $('.scroll-fade-row').each(function () {
+      var this_pos = $(this).offset().top;
+      if (effect_pos > this_pos) {
+        $(this).css({
+          opacity: 1,
+          transform: 'translateY(0)'
+        });
+        $(this).children().each(function (i) {
+          $(this).delay(100 + i * 200).queue(function () {
+            $(this).css({
+              opacity: 1,
+              transform: 'translateY(0)'
+            }).dequeue();
+          });
+        });
+      }
+    });
+  });
+
+});
+
+
+jQuery(function ($) {
+  /* =============================
+   画像のモーダルウインドウ
+  ============================= */
+  $('.js-modalWindow').click(function () {
+    // body要素内の末尾にdiv要素を追加
+    $('body').append('<div class="overlay"></div>');
+
+    // .overlay をフェードイン
+    $('.overlay').fadeIn(300);
+
+    var target = $(this).attr('href');
+    console.log(target);
+
+    // 新たなimg要素を生成
+    var largeImg = '<img src="' + target + '" class="content">';
+
+    // .overlay の子要素として追加
+    $('.overlay').append(largeImg);
+
+    // body要素に is-active classを追加
+    $('body').addClass('is-active');
+
+    // リンク機能を無効化
+    return false;
+  });
+
+  // 非表示用のクリックイベント
+  $('body').on('click', '.overlay', function () {
+    // 自身をフェードアウトで非表示にし、コールバック関数発動
+    $(this).fadeOut(300, function () {
+      // フェードアウト完了後、自身を削除
+      $(this).remove();
+
+      // body要素の is-active classを外す
+      $('body').removeClass('is-active');
+    });
+  });
+
+
+});
